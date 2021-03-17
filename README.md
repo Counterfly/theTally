@@ -53,5 +53,42 @@ We will evaluate you on your ability to solve the problem defined in the require
 ### Help
 If you have any questions regarding requirements, do not hesitate to email your contact at theScore for clarification.
 
-### Installation and running this solution
-... TODO
+
+### Setup and Install
+
+#### Data Prep
+
+NOTE: this has already been done, and the output is at `compose/db/docker-entrypoint-initdb.d/seed.json`
+
+1. Replace thousand-comma notation within strings disguised as ints
+
+On MacOS:
+```sh
+$ cat seed.json | sed -E 's/"([1-9]),([0-9]+)"/\1\2/g' > seed-parsed.json
+```
+
+On Unix:
+```sh
+$ cat seed.json | sed -r 's/"([1-9]),([0-9]+)"/\1\2/g' > seed-parsed.json
+```
+
+
+2. Replace newlines with emptystring
+This is for the sql inject since it doesn't like newlines :man_shrugging:
+
+```sh
+$ tr -d '\n' < seed-parsed.json > seed-final.json
+```
+
+#### Setup Database
+
+##### Local
+If you have a local instance of postgres running great! just run the `.sql` files in alphabetical order at `compose/db/docker-entrypoint-initdb.d/`.
+Note, you may have to change the port since the code currently connects over port 5439.
+
+##### Docker
+Otherwise, use the available docker-compose by running:
+```sh
+$ docker-compose up
+```
+postgres should start and run the initial database creation and ingestion (assuming the data transformation is done and located at [`compose/db/docker-entrypoint-initdb.d/seed.json`](compose/db/docker-entrypoint-initdb.d/seed.json) for you.
