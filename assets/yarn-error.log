@@ -1,0 +1,64 @@
+Arguments: 
+  /Users/markl/.nvm/versions/node/v12.16.1/bin/node /Users/markl/.nvm/versions/node/v12.16.1/bin/yarn
+
+PATH: 
+  /Users/markl/.nvm/versions/node/v12.16.1/bin:/usr/local/Cellar/pyenv-virtualenv/1.1.5/shims:/Users/markl/.pyenv/shims:/Users/markl/go/bin:/usr/local/bin/:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/Library/Apple/usr/bin:/Users/markl/.nvm/versions/node/v12.16.1/bin:/usr/local/Cellar/pyenv-virtualenv/1.1.5/shims:/Users/markl/.pyenv/shims:/Users/markl/go/bin:/usr/local/bin/:/usr/local/sbin:/Users/markl/workspace/apis/flutter/bin:/Users/markl/workspace/apis/flutter/bin:/Users/markl/go/bin
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  12.16.1
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/markl/workspace/mark/the_tally/assets/package.json: Unexpected token / in JSON at position 823
+      at JSON.parse (<anonymous>)
+      at /Users/markl/.nvm/versions/node/v12.16.1/lib/node_modules/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/Users/markl/.nvm/versions/node/v12.16.1/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /Users/markl/.nvm/versions/node/v12.16.1/lib/node_modules/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "repository": {},
+    "description": " ",
+    "license": "MIT",
+    "scripts": {
+      "deploy": "webpack --mode production",
+      "watch": "webpack --mode development --watch"
+    },
+    "dependencies": {
+      "phoenix": "file:../deps/phoenix",
+      "phoenix_html": "file:../deps/phoenix_html",
+      "phoenix_live_view": "file:../deps/phoenix_live_view",
+      "topbar": "^0.1.4"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.0.0",
+      "@babel/preset-env": "^7.0.0",
+      "babel-loader": "^8.0.0",
+      "copy-webpack-plugin": "^5.1.1",
+      "css-loader": "^3.4.2",
+      "hard-source-webpack-plugin": "^0.13.1",
+      "mini-css-extract-plugin": "^0.9.0",
+      "node-sass": "^4.13.1",
+      "optimize-css-assets-webpack-plugin": "^5.0.1",
+      "postcss-import": "^14.0.0",
+      "postcss-loader": "^5.2.0",
+      "postcss-purgecss": "^2.0.3",
+      // "purgecss": "^4.0.2",
+      "sass-loader": "^8.0.2",
+      "terser-webpack-plugin": "^2.3.2",
+      "webpack": "^4.41.5",
+      "webpack-cli": "^3.3.2"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

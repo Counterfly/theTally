@@ -92,3 +92,46 @@ Otherwise, use the available docker-compose by running:
 $ docker-compose up
 ```
 postgres should start and run the initial database creation and ingestion (assuming the data transformation is done and located at [`compose/db/docker-entrypoint-initdb.d/seed.json`](compose/db/docker-entrypoint-initdb.d/seed.json) for you.
+
+
+#### Install
+
+0. Optionall install [postgres](https://wiki.postgresql.org/wiki/Detailed_installation_guides)
+NOTE: this is optional, because a docker (compose) file is provided that will run postgres as well.
+
+1. Since we use webpack, we'll need `npm`, and thus [Nodejs](https://nodejs.org/en/download/)
+
+2. If yarn is not installed see [yarn's homepage](https://classic.yarnpkg.com/en/docs/install), which says to do the following:
+```sh
+npm install --global yarn
+```
+
+3. Install dependencies
+```sh
+$ cd assets && yarn
+```
+
+4. Install [elixir](https://elixir-lang.org/install.html)
+```sh
+$ brew install elixir
+```
+
+5. Install hex and [phoenix web framework](https://hexdocs.pm/phoenix/installation.html)
+```sh
+$ mix local.hex
+$ mix archive.install hex phx_new 1.5.8
+```
+
+6. Ensure all elixir dependies are installed
+```sh
+$ mix deps.get
+```
+
+7. Done! Now we've installed Nodejs, yarn, elixir with phoenix, and optionally postgres.
+
+#### Run
+
+```sh
+$ ./runServer.sh
+```
+The server should be listening on [localhost:4000](localhost:4000)
