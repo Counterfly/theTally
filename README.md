@@ -58,27 +58,25 @@ If you have any questions regarding requirements, do not hesitate to email your 
 
 #### Data Prep
 
-NOTE: this has already been done, and the output is at `compose/db/docker-entrypoint-initdb.d/seed.json`
-
-1. Replace thousand-comma notation within strings disguised as ints
+1. Replace thousand-comma notation from strings disguised as ints
 
 On MacOS:
 ```sh
-$ cat seed.json | sed -E 's/"([1-9]),([0-9]+)"/\1\2/g' > seed-parsed.json
+$ cat rushing.json | sed -E 's/"([1-9]),([0-9]+)"/\1\2/g' > rushing-parsed.json
 ```
 
 On Unix:
 ```sh
-$ cat seed.json | sed -r 's/"([1-9]),([0-9]+)"/\1\2/g' > seed-parsed.json
+$ cat rushing.json | sed -r 's/"([1-9]),([0-9]+)"/\1\2/g' > ruhsing-parsed.json
 ```
 
-
-2. Replace newlines with emptystring
+<!-- this is only used if using SQL to perform a COPY operation to seed the database -->
+<!-- 2. Replace newlines with emptystring
 This is for the sql inject since it doesn't like newlines :man_shrugging:
 
 ```sh
-$ tr -d '\n' < seed-parsed.json > seed-final.json
-```
+$ tr -d '\n' < rushing-parsed.json > compose/db/docker-entrypoint-initdb.d/seed.json
+``` -->
 
 #### Setup Database
 
@@ -127,10 +125,21 @@ $ mix archive.install hex phx_new 1.5.8
 $ mix deps.get
 ```
 
-7. Done! Now we've installed Nodejs, yarn, elixir with phoenix, and optionally postgres.
+7. Create and seed database
+```sh
+$ mix ecto.migrate
+```
+
+7. b) NOTE: if you ever want to start anew you can do the following which will drop and re-setup the database with the initial seed at using `./rushing-parsed.json`.
+```sh
+$ mix ecto.drop && mix ecto.setup
+```
+
+8. Done! Now we've installed Nodejs, yarn, elixir with phoenix, (optionally) postgres, and even created the database with initial seed data.
 
 #### Run
 
+Make sure you've done everything in Setup first.
 ```sh
 $ ./runServer.sh
 ```
