@@ -35,12 +35,12 @@ defmodule TheTally.DatabaseSeeder do
   @doc """
   Inserts a new player into the database.
 
-  Returns `{player_data, %Player{}}`
+  Returns `{%{}, %Player{}}`
 
   ## Examples
 
       iex> insert_player(player_data)
-      %Player{}
+      {player_data, %Player{}}
 
   """
   @spec insert_player(map()) :: {map(), %Player{id: pos_integer()}}
@@ -57,6 +57,17 @@ defmodule TheTally.DatabaseSeeder do
     {json_seed_data, player}
   end
 
+  @doc """
+  Inserts a new Rushing metric into the database.
+
+  Returns `{%{}, %Player{}, %Rushing}`
+
+  ## Examples
+
+      iex> insert_rushing(player_data, %Player{})
+      {player_data, %Player{}, %Rushing{}}
+
+  """
   @spec insert_rushing({map(), %Player{id: pos_integer()}}) ::
           {map(), %Player{id: pos_integer()}, %Rushing{id: pos_integer()}}
   def insert_rushing({json_seed_data, player}) when is_map(json_seed_data) do
