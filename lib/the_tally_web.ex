@@ -5,7 +5,7 @@ defmodule TheTallyWeb do
 
   This can be used in your application as:
 
-      use TheTallyWeb, :controller
+      use TheTallyWeb, :
       use TheTallyWeb, :view
 
   The definitions below will be executed for every view,

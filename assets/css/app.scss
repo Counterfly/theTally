@@ -1,128 +1,63 @@
 /* This file is for your main application css. */
-@import "./phoenix.css";
 
 /* import tailwind
 @see https://tailwindcss.com/docs/installation#3-create-your-tailwind-config-file-optional
 */
+
 /**
  * This injects Tailwind's base styles, which is a combination of
  * Normalize.css and some additional base styles.
- *
- * If using `postcss-import`, use this import instead:
- *
- * @import "tailwindcss/base";
  */
 @tailwind base;
-// @import "tailwindcss/base";
 
  /**
   * This injects any component classes registered by plugins.
-  *
-  * If using `postcss-import`, use this import instead:
-  *
-  * @import "tailwindcss/components";
   */
 @tailwind components;
-// @import "tailwindcss/components";
 
  /**
   * This injects all of Tailwind's utility classes, generated based on your
   * config file.
-  *
-  * If using `postcss-import`, use this import instead:
-  *
-  * @import "tailwindcss/utilities";
   */
 @tailwind utilities;
-// @import "tailwindcss/utilities";
 
 
 /* Custom css below */
+/* The number of attributes displayed within the rushing table */
+$num-rushing-attributes: 15;
 
-/* LiveView specific classes for your customizations */
-.phx-no-feedback.invalid-feedback,
-.phx-no-feedback .invalid-feedback {
-  display: none;
-}
+// .grid-cols-num-rushing-attributes {
+//   grid-template-columns: repeat($num-rushing-attributes, minmax(0, 1fr));
 
-.phx-click-loading {
-  opacity: 0.5;
-  transition: opacity 1s ease-out;
-}
+//   // first row (header) to take up as much space as needed
+//   // then the content can consume the rest
+//   grid-template-rows: auto 1fr;
 
-.phx-disconnected{
-  cursor: wait;
-}
-.phx-disconnected *{
-  pointer-events: none;
-}
+//   // unfortunately, it seems like repeat() doesn't work
+//   // so the number of columns should match $num-rushing-attributes
+//   grid-template-areas:
+//     'header header header header header header header header header header header header header header header'
+//     'data data data data data data data data data data data data data data data';
+// }
 
-.phx-modal {
-  opacity: 1!important;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
-}
+// .grid-cols-num-rushing-attributes > .grid-cols-num-rushing-attributes__header {
+//   grid-area: header;
+// }
 
-.phx-modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
+// .grid-cols-num-rushing-attributes > .grid-cols-num-rushing-attributes__data {
+//   grid-area: data;
+//   overflow: auto;
+//   padding: 15px 5px 10px 5px;
+// }
+
+tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
 }
 
-.phx-modal-close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.phx-modal-close:hover,
-.phx-modal-close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-
-/* Alerts and form errors */
-.alert {
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-}
-.alert-info {
-  color: #31708f;
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-}
-.alert-warning {
-  color: #8a6d3b;
-  background-color: #fcf8e3;
-  border-color: #faebcc;
-}
-.alert-danger {
-  color: #a94442;
-  background-color: #f2dede;
-  border-color: #ebccd1;
-}
-.alert p {
-  margin-bottom: 0;
-}
-.alert:empty {
-  display: none;
-}
-.invalid-feedback {
-  color: #a94442;
-  display: block;
-  margin: -1rem 0 2rem;
+#table-rushing > tbody td, #table-rushing > thead th {
+  width: calc(100% / #{$num-rushing-attributes});
+  float: left;
 }

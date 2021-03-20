@@ -10,7 +10,7 @@ defmodule TheTally.Football.Player do
 
     # has many rushings, in case the player changes team
     ## or we later want to do per-season
-    has_many :rushings, Rushing, foreign_key: :player_id
+    has_one :rushing, Rushing, foreign_key: :player_id
 
     timestamps()
   end

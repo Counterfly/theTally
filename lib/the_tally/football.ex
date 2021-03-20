@@ -16,9 +16,20 @@ defmodule TheTally.Football do
       iex> list_players()
       [%Player{}, ...]
 
+      iex> list_players(preloads: [:rushings])
+      [%Player{..., :rushings: {}}, ...]
+
   """
-  def list_players do
-    Repo.all(Player)
+  def list_players(opts \\ []) do
+    preloads = Keyword.get(opts, :preloads, [])
+
+
+    # Repo.all(Player)
+    Player
+    |> Repo.all()
+    |> Repo.preload(preloads)
+    # Player
+    # |> join(:left, [player], _ in assoc(player, :))
   end
 
   @doc """

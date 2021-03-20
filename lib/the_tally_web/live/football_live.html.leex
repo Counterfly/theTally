@@ -1,0 +1,50 @@
+<div class="mt-8"></div>
+<%= inspect Enum.count(@players) %>
+
+<%# <section id="sec-rushing-table"> %>
+
+  <table id="table-rushing" class="block border-collapse table-auto w-full">
+    <thead class="block">
+      <tr class="block tr-clear">
+        <th class="block border border-green-800 truncate">Player</th>
+        <th class="block border border-green-800 truncate">Team</th>
+        <th class="block border border-green-800 truncate">Pos</th>
+        <th class="block border border-green-800 truncate">Att</th>
+        <th class="block border border-green-800 truncate">Att/G</th>
+        <th class="block border border-green-800 truncate">Yds</th>
+        <th class="block border border-green-800 truncate">Avg</th>
+        <th class="block border border-green-800 truncate">Yds</th>
+        <th class="block border border-green-800 truncate">TD</th>
+        <th class="block border border-green-800 truncate">Lng</th>
+        <th class="block border border-green-800 truncate">1st</th>
+        <th class="block border border-green-800 truncate">1st%</th>
+        <th class="block border border-green-800 truncate">20+</th>
+        <th class="block border border-green-800 truncate">40+</th>
+        <th class="block border border-green-800 truncate">FUM</th>
+      </tr>
+    </thead>
+
+    <tbody style="height: 70vh;" class="block overflow-y-auto">
+      <%= for player <- @players do %>
+      <tr class="block tr-clear">
+        <td class="block border border-green-600 truncate"><%=player.name%></td>
+        <td class="block border border-green-600 truncate"><%=player.team%></td><!-- TODO: make team logo with tooltip team name -->
+        <td class="block border border-green-600 truncate"><%=player.position%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.attempts%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.attempts_per_game%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.yards%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.yards_per_carry%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.yards_per_game%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.touchdowns%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.longest_run%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.first_downs%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.first_down_percentage%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.min_twenty_yards%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.min_forty_yards%></td>
+        <td class="block border border-green-600 truncate"><%=player.rushing.fumbles%></td>
+      </tr>
+      <%= end %>
+    </tbody>
+  </table>
+
+<%# </section> %>
