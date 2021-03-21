@@ -7,8 +7,15 @@ defmodule TheTallyWeb.FootballLive do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, 30000)
 
-    {:ok, assign(socket, players: Football.list_players(preloads: [:rushing]))}
-    # case Football.list_players(preloads: [:rushing]) do
+    players = Football.list_players()
+
+    query = [
+      {:players, []},
+      {:rushing, []}
+    ]
+
+    {:ok, assign(socket, players: players, query: query)}
+    # case Football.list_players() do
     #   [players] ->
     #     {:ok, assign(socket, players: players)}
 
@@ -18,34 +25,50 @@ defmodule TheTallyWeb.FootballLive do
     # end
   end
 
-  @impl true
-  def handle_event("suggest", %{"q" => query}, socket) do
-    {:noreply, assign(socket, results: search(query), query: query)}
+  def handle_info(:update, socket) do
+    # nothing to do, just
+    Process.send_after(self(), :update, 30000)
+    # {:ok, temperature} = Thermostat.get_reading(socket.assigns.user_id)
+    {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("search", %{"q" => query}, socket) do
-    case search(query) do
-      %{^query => vsn} ->
-        {:noreply, redirect(socket, external: "https://hexdocs.pm/#{query}/#{vsn}")}
+  def handle_event("toggleLng", _, socket) do
+    query = socket.assigns.query
+    rush_query = Keyword.get(query, :rushing, [])
+    rush_query_order_by = Keyword.get(rush_query, :order_by, [])
+    value = Keyword.get(rush_query_order_by, :longest_run, nil)
+    # since there are 3 states (no sorting, ascending, descending)
+    value = transition_sort(value)
 
-      _ ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "No dependencies found matching \"#{query}\"")
-         |> assign(results: %{}, query: query)}
+    rush_query_order_by = Keyword.put(rush_query_order_by, :longest_run, value)
+    rush_query = Keyword.put(rush_query, :order_by, rush_query_order_by)
+    query = Keyword.put(query, :rushing, rush_query)
+    filtered_players = Football.list_players(query)
+
+    {:noreply, assign(socket, players: filtered_players, query: query)}
+  end
+
+  @doc """
+  Returns a css class string for a column depending on if it's being sorted.
+  """
+  def sort_column_class(sort_value) do
+    if sort_value != nil do
+      "bg-gray-300" # this is a tailwind class
+    else
+      ""
     end
   end
 
-  defp search(query) do
-    if not TheTallyWeb.Endpoint.config(:code_reloader) do
-      raise "action disabled when not in development"
-    end
+  @doc """
+  Returns the next transition state for sortng given the current `sort_order`.
 
-    for {app, desc, vsn} <- Application.started_applications(),
-        app = to_string(app),
-        String.starts_with?(app, query) and not List.starts_with?(desc, ~c"ERTS"),
-        into: %{},
-        do: {app, vsn}
+  Transition: nil (no order) -> ASC -> DESC -> nil
+  """
+  defp transition_sort(sort_order) when is_atom(sort_order) do
+    case sort_order do
+      :asc -> :desc
+      :desc -> nil
+      _ -> :asc
+    end
   end
 end

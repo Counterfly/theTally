@@ -1,5 +1,13 @@
+<div class="bg-red-300 text-red-600 p-2">
+  <h3>Known Issues</h3>
+  <ul>
+    <li>Longest Run (Lng) - The desired result probably is not a character comparison (i wasn't sure what 'T' meant [whether it resulted in a touchdown?]) and so this manifests in how we model the data. We should probably have a 'longest_run' and 'longest_run_is_touchdown' field.</li>
+    <li>I spent too long on getting a css-grid to work so just defaulted to a table. I'm sure a grid would work and is nicer.</li>
+    <li>Provide dynamic column re-sizing or at least make the table scrollable in the x-dimension as well.</li>
+  </ul>
+</div>
+
 <div class="mt-8"></div>
-<%= inspect Enum.count(@players) %>
 
 <%# <section id="sec-rushing-table"> %>
 
@@ -15,7 +23,7 @@
         <th class="block border border-green-800 truncate">Avg</th>
         <th class="block border border-green-800 truncate">Yds</th>
         <th class="block border border-green-800 truncate">TD</th>
-        <th class="block border border-green-800 truncate">Lng</th>
+        <th class="block border border-green-800 truncate <%= sort_column_class(@query[:rushing][:order_by][:longest_run]) %>" phx-click="toggleLng">Lng</th>
         <th class="block border border-green-800 truncate">1st</th>
         <th class="block border border-green-800 truncate">1st%</th>
         <th class="block border border-green-800 truncate">20+</th>
@@ -36,7 +44,7 @@
         <td class="block border border-green-600 truncate"><%=player.rushing.yards_per_carry%></td>
         <td class="block border border-green-600 truncate"><%=player.rushing.yards_per_game%></td>
         <td class="block border border-green-600 truncate"><%=player.rushing.touchdowns%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.longest_run%></td>
+        <td class="block border border-green-600 truncate <%= sort_column_class(@query[:rushing][:order_by][:longest_run]) %>"><%=player.rushing.longest_run%></td>
         <td class="block border border-green-600 truncate"><%=player.rushing.first_downs%></td>
         <td class="block border border-green-600 truncate"><%=player.rushing.first_down_percentage%></td>
         <td class="block border border-green-600 truncate"><%=player.rushing.min_twenty_yards%></td>

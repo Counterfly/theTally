@@ -4,9 +4,10 @@ defmodule TheTally.Football do
   """
 
   import Ecto.Query, warn: false
+  import Ecto.Query.API, only: [field: 2]
   alias TheTally.Repo
 
-  alias TheTally.Football.Player
+  alias TheTally.Football.{Player, Rushing}
 
   @doc """
   Returns the list of players.
@@ -16,20 +17,106 @@ defmodule TheTally.Football do
       iex> list_players()
       [%Player{}, ...]
 
-      iex> list_players(preloads: [:rushings])
-      [%Player{..., :rushings: {}}, ...]
+      iex> list_players()
+      [%Player{..., rushing: {}}, ...]
 
+      iex> list_players(filters: {players: name: "First Last"}})
+      [%Player{name: "First Last", ...}, ...]
+
+      iex> list_players(order_by: {rushing: {longest_run: :desc} })
+      [%Player{..., rushing: {longest_run: 999}}, %Player{..., rushing: {longest_run: 998}}, ...]
   """
   def list_players(opts \\ []) do
+    # TODO: preloads can just be a MapSet
     preloads = Keyword.get(opts, :preloads, [])
+    filters = Keyword.get(opts, :filters, [])
+    order_by = Keyword.get(opts, :order_by, [])
 
-
-    # Repo.all(Player)
-    Player
+    player_opts = Keyword.get(opts, :players, [])
+    base_query()
+    |> build_players(player_opts)
+    |> join_rushing(Keyword.get(opts, :rushing, []))
+    |> sort_players(Keyword.get(player_opts, :order_by, []))
     |> Repo.all()
-    |> Repo.preload(preloads)
-    # Player
-    # |> join(:left, [player], _ in assoc(player, :))
+  end
+
+  def base_query() do
+    from(players in Player)
+  end
+
+  @doc """
+  Builds the query to preload external models.
+
+  ## Examples
+
+    iex> build_players(query, [{ filters: {:name, "John Doe"} }])
+      [%Player{name: "John Doe", ...}, ...]
+
+  """
+  defp build_players(query, opts \\ []) do
+    query
+    |> filter_players(Keyword.get(opts, :filters, []))
+  end
+
+  @doc """
+  Applies the filters in `kw_filters` on `query`.
+  `kw_filters` : [ Keyword{column_name, filter_value}]
+  """
+  defp filter_players(query, kw_filters) do
+    Enum.reduce(kw_filters, query, fn {col, value}, query ->
+      query |> where(^[{col, value}])
+    end)
+  end
+
+  @doc """
+  Sorts in Players by `kw_order_by`.
+  `kw_order_by` : [ Keyword{column_name, one_of{:asc, :desc}}]
+  """
+  defp sort_players(query, kw_order_by) do
+    Enum.reduce(kw_order_by, query, fn {col, direction}, query ->
+      if direction != nil do
+        query |> order_by([^direction, ^col])
+      end
+    end)
+  end
+
+  @doc """
+  Builds the base Rushing query.
+  """
+  def base_rushing_query() do
+    from(rushing in Rushing)
+  end
+
+  @doc """
+  """
+  defp join_rushing(query, opts \\ []) do
+    order_by_list = Keyword.get(opts, :order_by, [])
+    # convert the order by from {column: order} to [order, :field, column]
+    order_by = Enum.map order_by_list, fn {col, dir} ->
+      {dir, :field, col}
+    end
+
+    query = from(players in query,
+      join: rush in assoc(players, :rushing),
+      preload: [rushing: rush]
+    )
+    Enum.reduce(order_by, query, fn
+      {dir, :field, field}, query ->
+        from [q,r] in query, order_by: [{^dir, field(r, ^field)}]
+    end)
+
+    # from(players in query,
+    #   # left_join: rush in Rushing,
+    #   # on: rush.player_id == players.id,
+    #   join: rush in assoc(players, :rushing),
+    #   # order_by: [asc: field(rush, :longest_run)],
+    #   # order_by: [{^d, field(rush, ^c)}],
+    #   order_by: Enum.reduce(order_by_list, [], fn {dir, col}, acc ->
+    #     acc + [{^dir, field(rush, ^col)}]
+    #   end),
+    #   preload: [rushing: rush]
+    # )
+    # |> filter_players(Keyword.get(opts, :filters, []))
   end
 
   @doc """
@@ -112,8 +199,6 @@ defmodule TheTally.Football do
   def change_player(%Player{} = player, attrs \\ %{}) do
     Player.changeset(player, attrs)
   end
-
-  alias TheTally.Football.Rushing
 
   @doc """
   Returns the list of rushings.
