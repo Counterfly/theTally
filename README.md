@@ -70,6 +70,8 @@ On Unix:
 $ cat rushing.json | sed -r 's/"([1-9]),([0-9]+)"/\1\2/g' > ruhsing-parsed.json
 ```
 
+2. TODO: should map the `Lng` field into two fields: `Lng` (longest_run) and `Lng_TD` (longest_run_touchdown) which represent the longest run in yards (integer) and whether it scored a touchdown (boolean).
+
 <!-- this is only used if using SQL to perform a COPY operation to seed the database -->
 <!-- 2. Replace newlines with emptystring
 This is for the sql inject since it doesn't like newlines :man_shrugging:
@@ -89,7 +91,9 @@ Otherwise, use the available docker-compose by running:
 ```sh
 $ docker-compose up
 ```
+<!--
 postgres should start and run the initial database creation and ingestion (assuming the data transformation is done and located at [`compose/db/docker-entrypoint-initdb.d/seed.json`](compose/db/docker-entrypoint-initdb.d/seed.json) for you.
+-->
 
 
 #### Install
@@ -144,3 +148,19 @@ Make sure you've done everything in Setup first.
 $ ./runServer.sh
 ```
 The server should be listening on [localhost:4000](localhost:4000)
+
+
+### Known Errors
+
+1. openssl library issue
+```sh
+dyld: Library not loaded: /usr/local/bin/openssl/lib/libssl.1.0.0.dylib
+Referenced from: /usr/local/bin/
+Reason: image not found
+```
+
+    Fix:
+```sh
+$ wget https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
+$ brew install openssl.rb
+```
