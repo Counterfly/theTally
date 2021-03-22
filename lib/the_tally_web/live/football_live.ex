@@ -15,10 +15,10 @@ defmodule TheTallyWeb.FootballLive do
       {:rushing, []}
     ]
 
-    {:ok, assign(socket, players: players, query: query)}
+    {:ok, assign(socket, player: players, query: query)}
     # case Football.list_players() do
     #   [players] ->
-    #     {:ok, assign(socket, players: players)}
+    #     {:ok, assign(socket, player: players)}
 
     #   nil ->
     #     # error, redirect to error page
@@ -27,21 +27,40 @@ defmodule TheTallyWeb.FootballLive do
   end
 
   def handle_info(:update, socket) do
-    # nothing to do, just
+    # nothing to do?
     Process.send_after(self(), :update, 30000)
-    # {:ok, temperature} = Thermostat.get_reading(socket.assigns.user_id)
     {:noreply, socket}
   end
 
   def handle_event("toggleLng", _, socket) do
+    handle_toggle(socket, :longest_run)
+  end
+
+  def handle_event("toggleTd", _, socket) do
+    handle_toggle(socket, :touchdowns)
+  end
+
+  def handle_event("toggleYds", _, socket) do
+    handle_toggle(socket, :yards)
+  end
+
+  @doc """
+  Handles all (Rushing) toggle-ables.
+
+  ## Examples
+    iex> handle_toggle(socket, :yards)
+      %Socket{}
+  """
+  defp handle_toggle(socket, atom) do
     query = socket.assigns.query
     rush_query = Keyword.get(query, :rushing, [])
     rush_query_order_by = Keyword.get(rush_query, :order_by, [])
-    value = Keyword.get(rush_query_order_by, :longest_run, nil)
-    # since there are 3 states (no sorting, ascending, descending)
-    value = transition_sort(value)
+    value = Keyword.get(rush_query_order_by, atom, nil)
 
-    rush_query_order_by = Keyword.put(rush_query_order_by, :longest_run, value)
+    # since there are 3 states (no sorting, ascending, descending)
+    value = transition_order_by(value)
+
+    rush_query_order_by = Keyword.put(rush_query_order_by, atom, value)
     rush_query = Keyword.put(rush_query, :order_by, rush_query_order_by)
     query = Keyword.put(query, :rushing, rush_query)
     update_players(query, socket)
@@ -59,12 +78,12 @@ defmodule TheTallyWeb.FootballLive do
   end
 
   @doc """
-  Returns the next transition state for sortng given the current `sort_order`.
+  Returns the next transition state for sortng given the current `order_by`.
 
   Transition: nil (no order) -> ASC -> DESC -> nil
   """
-  defp transition_sort(sort_order) when is_atom(sort_order) do
-    case sort_order do
+  defp transition_order_by(ordering) when is_atom(ordering) do
+    case ordering do
       :asc -> :desc
       :desc -> nil
       _ -> :asc
@@ -96,7 +115,7 @@ defmodule TheTallyWeb.FootballLive do
   """
   # def handle_event("search_player_keydown", %{"key" => "Enter"}, socket) do
   #   # submit a new query
-  #   IO.puts("Keydown ENTER!!!")
+  #   IO.puts("Keydown Enter, starting search")
   #   update_players(socket.assigns.query, socket)
   # end
 
@@ -112,7 +131,6 @@ defmodule TheTallyWeb.FootballLive do
   #     {:noreply, socket}
   #   else
   #     # update the socket's query parameter
-  #     IO.puts("BACKSPACING! #{current_name}")
   #     new_name = String.slice(current_name, 0..-2)
   #     player_query_where = Keyword.put(player_query_where, :name, new_name)
   #     player_query = Keyword.put(player_query, :order_by, player_query_where)
@@ -131,12 +149,10 @@ defmodule TheTallyWeb.FootballLive do
 
   #   if String.match?(key, ~r/^[[:alpha:]]$/) do
   #     # update the socket's query parameter
-  #     IO.puts("Keydown got a good character: #{key}")
   #     new_name = current_name <> key
   #     player_query_where = Keyword.put(player_query_where, :name, new_name)
   #     player_query = Keyword.put(player_query, :where, player_query_where)
   #     query = Keyword.put(query, :player, player_query)
-  #     IO.inspect(query)
   #    {:noreply, assign(socket, query: query)}
   #   else
   #     # got a weird key
@@ -160,6 +176,6 @@ defmodule TheTallyWeb.FootballLive do
   def update_players(query, socket) do
     # get the query parameters
     filtered_players = Football.list_players(query)
-    {:noreply, assign(socket, players: filtered_players, query: query)}
+    {:noreply, assign(socket, player: filtered_players, query: query)}
   end
 end

@@ -20,7 +20,7 @@ defmodule TheTally.Football do
       iex> list_players()
       [%Player{..., rushing: {}}, ...]
 
-      iex> list_players(where: {players: name: "First Last"}})
+      iex> list_players(where: {player: name: "First Last"}})
       [%Player{name: "First Last", ...}, ...]
 
       iex> list_players(order_by: {rushing: {longest_run: :desc} })
@@ -31,9 +31,9 @@ defmodule TheTally.Football do
     preloads = Keyword.get(opts, :preloads, [])
     where = Keyword.get(opts, :where, [])
     order_by = Keyword.get(opts, :order_by, [])
-    IO.puts("----")
+    IO.puts("--list_players--")
     IO.inspect(opts)
-    IO.puts("----")
+    IO.puts("--end list players--")
 
     player_opts = Keyword.get(opts, :player, [])
     base_query()
@@ -66,8 +66,8 @@ defmodule TheTally.Football do
   `kw_where` : [ Keyword{column_name, filter_value}]
   """
   defp filter_players(query, kw_where) do
-    IO.puts("filtering players....")
-    IO.inspect(kw_where)
+    # IO.puts("filtering players....")
+    # IO.inspect(kw_where)
     Enum.reduce(kw_where, query, fn {col, value}, query ->
       query |> where(^[{col, value}])
     end)
