@@ -2,8 +2,8 @@
   <h3>Known Issues</h3>
   <ul>
     <li>Longest Run (Lng) - The desired result probably is not a character comparison (i wasn't sure what 'T' meant [whether it resulted in a touchdown?]) and so this manifests in how we model the data. We should probably have a 'longest_run' and 'longest_run_is_touchdown' field.</li>
-    <li>I spent too long on getting a css-grid to work so just defaulted to a table. I'm sure a grid would work and is nicer.</li>
-    <li>Provide dynamic column re-sizing or at least make the table scrollable in the x-dimension as well.</li>
+    <li>I spent too long trying to get css-grid to work and just decided to get "something" in. I'm sure a grid would work and is nicer.</li>
+    <li>Provide dynamic column re-sizing.</li>
   </ul>
 </div>
 
@@ -11,48 +11,65 @@
 
 <%# <section id="sec-rushing-table"> %>
 
-  <table id="table-rushing" class="block border-collapse table-auto w-full">
-    <thead class="block">
-      <tr class="block tr-clear">
-        <th class="block border border-green-800 truncate">Player</th>
-        <th class="block border border-green-800 truncate">Team</th>
-        <th class="block border border-green-800 truncate">Pos</th>
-        <th class="block border border-green-800 truncate">Att</th>
-        <th class="block border border-green-800 truncate">Att/G</th>
-        <th class="block border border-green-800 truncate">Yds</th>
-        <th class="block border border-green-800 truncate">Avg</th>
-        <th class="block border border-green-800 truncate">Yds</th>
-        <th class="block border border-green-800 truncate">TD</th>
-        <th class="block border border-green-800 truncate <%= sort_column_class(@query[:rushing][:order_by][:longest_run]) %>" phx-click="toggleLng">Lng</th>
-        <th class="block border border-green-800 truncate">1st</th>
-        <th class="block border border-green-800 truncate">1st%</th>
-        <th class="block border border-green-800 truncate">20+</th>
-        <th class="block border border-green-800 truncate">40+</th>
-        <th class="block border border-green-800 truncate">FUM</th>
-      </tr>
-    </thead>
+  <div class="rounded-t-xl overflow-hidden bg-gradient-to-r from-light-blue-50 to-light-blue-100 py-4 px-2">
+    <!-- phx-keydown="search_player_keydown" -->
+    <%# <form> %>
+    <input id="inputPlayerName" class="rounded-md py-1 px-2 ring-1 ring-offset-blue-500 focus:ring-2 focus:ring-offset-blue-600" placeholder="<%=placeholder_search_by_player(@query[:player][:where][:name])%>" phx-update=ignore >
+    <%# <input type="submit" value="Search Player" phx-click="search_player" phx-value-name="test" data-inputid="inputPlayerName" class="rounded-md py-1 px-2 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"> %>
+    <input type="submit" value="Search Player" phx-hook="PlayerName" data-inputid="inputPlayerName" class="rounded-md py-1 px-2 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">
+    <%# </form> %>
+    <!--
+    <%= if @query[:player][:where][:name] != nil do %>
+      <div class="tooltip rounded-md py-1 px-2 bg-blue-600 hover:bg-red-600 outline-none ring-2 ring-blue-600 ring-opacity-50">
+        <%=@query[:player][:where][:name]%>
+        <span class="tooltip-text">Remove filter</span>
+      </div>
+    <% end %>
+    -->
+  </div>
+  <div class="container overflow-scroll" style="max-height: 80vh;">
+    <table id="table-rushing" class=" border-collapse table-auto">
+      <thead class="">
+        <tr class=" ">
+          <th class="px-3 border border-green-800 truncate">Player</th>
+          <th class="px-3 border border-green-800 truncate">Team</th>
+          <th class="px-3 border border-green-800 truncate">Pos</th>
+          <th class="px-3 border border-green-800 truncate">Att</th>
+          <th class="px-3 border border-green-800 truncate">Att/G</th>
+          <th class="px-3 border border-green-800 truncate">Yds</th>
+          <th class="px-3 border border-green-800 truncate">Avg</th>
+          <th class="px-3 border border-green-800 truncate">Yds</th>
+          <th class="px-3 border border-green-800 truncate">TD</th>
+          <th class="px-3 border border-green-800 truncate clickable <%= sort_column_class(@query[:rushing][:order_by][:longest_run]) %>" phx-click="toggleLng">Lng</th>
+          <th class="px-3 border border-green-800 truncate">1st</th>
+          <th class="px-3 border border-green-800 truncate">1st%</th>
+          <th class="px-3 border border-green-800 truncate">20+</th>
+          <th class="px-3 border border-green-800 truncate">40+</th>
+          <th class="px-3 border border-green-800 truncate">FUM</th>
+        </tr>
+      </thead>
 
-    <tbody style="height: 70vh;" class="block overflow-y-auto">
-      <%= for player <- @players do %>
-      <tr class="block tr-clear">
-        <td class="block border border-green-600 truncate"><%=player.name%></td>
-        <td class="block border border-green-600 truncate"><%=player.team%></td><!-- TODO: make team logo with tooltip team name -->
-        <td class="block border border-green-600 truncate"><%=player.position%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.attempts%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.attempts_per_game%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.yards%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.yards_per_carry%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.yards_per_game%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.touchdowns%></td>
-        <td class="block border border-green-600 truncate <%= sort_column_class(@query[:rushing][:order_by][:longest_run]) %>"><%=player.rushing.longest_run%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.first_downs%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.first_down_percentage%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.min_twenty_yards%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.min_forty_yards%></td>
-        <td class="block border border-green-600 truncate"><%=player.rushing.fumbles%></td>
-      </tr>
-      <%= end %>
-    </tbody>
-  </table>
-
+      <tbody style="height: 70vh;" class=" overflow-y-auto">
+        <%= for player <- @players do %>
+        <tr class=" ">
+          <td class="px-1 border border-green-600 truncate"><%=player.name%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.team%></td><!-- TODO: make team logo with tooltip team name -->
+          <td class="px-1 border border-green-600 truncate"><%=player.position%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.attempts%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.attempts_per_game%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.yards%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.yards_per_carry%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.yards_per_game%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.touchdowns%></td>
+          <td class="px-1 border border-green-600 truncate <%= sort_column_class(@query[:rushing][:order_by][:longest_run]) %>"><%=player.rushing.longest_run%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.first_downs%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.first_down_percentage%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.min_twenty_yards%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.min_forty_yards%></td>
+          <td class="px-1 border border-green-600 truncate"><%=player.rushing.fumbles%></td>
+        </tr>
+        <%= end %>
+      </tbody>
+    </table>
+  </div>
 <%# </section> %>

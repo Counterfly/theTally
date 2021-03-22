@@ -20,7 +20,7 @@ defmodule TheTally.Football do
       iex> list_players()
       [%Player{..., rushing: {}}, ...]
 
-      iex> list_players(filters: {players: name: "First Last"}})
+      iex> list_players(where: {players: name: "First Last"}})
       [%Player{name: "First Last", ...}, ...]
 
       iex> list_players(order_by: {rushing: {longest_run: :desc} })
@@ -29,10 +29,13 @@ defmodule TheTally.Football do
   def list_players(opts \\ []) do
     # TODO: preloads can just be a MapSet
     preloads = Keyword.get(opts, :preloads, [])
-    filters = Keyword.get(opts, :filters, [])
+    where = Keyword.get(opts, :where, [])
     order_by = Keyword.get(opts, :order_by, [])
+    IO.puts("----")
+    IO.inspect(opts)
+    IO.puts("----")
 
-    player_opts = Keyword.get(opts, :players, [])
+    player_opts = Keyword.get(opts, :player, [])
     base_query()
     |> build_players(player_opts)
     |> join_rushing(Keyword.get(opts, :rushing, []))
@@ -49,21 +52,23 @@ defmodule TheTally.Football do
 
   ## Examples
 
-    iex> build_players(query, [{ filters: {:name, "John Doe"} }])
+    iex> build_players(query, [{ where: {:name, "John Doe"} }])
       [%Player{name: "John Doe", ...}, ...]
 
   """
   defp build_players(query, opts \\ []) do
     query
-    |> filter_players(Keyword.get(opts, :filters, []))
+    |> filter_players(Keyword.get(opts, :where, []))
   end
 
   @doc """
-  Applies the filters in `kw_filters` on `query`.
-  `kw_filters` : [ Keyword{column_name, filter_value}]
+  Applies the where filters in `kw_where` on `query`.
+  `kw_where` : [ Keyword{column_name, filter_value}]
   """
-  defp filter_players(query, kw_filters) do
-    Enum.reduce(kw_filters, query, fn {col, value}, query ->
+  defp filter_players(query, kw_where) do
+    IO.puts("filtering players....")
+    IO.inspect(kw_where)
+    Enum.reduce(kw_where, query, fn {col, value}, query ->
       query |> where(^[{col, value}])
     end)
   end
@@ -116,7 +121,7 @@ defmodule TheTally.Football do
     #   end),
     #   preload: [rushing: rush]
     # )
-    # |> filter_players(Keyword.get(opts, :filters, []))
+    # |> filter_players(Keyword.get(opts, :where, []))
   end
 
   @doc """

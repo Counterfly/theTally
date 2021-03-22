@@ -26,6 +26,74 @@
 /* The number of attributes displayed within the rushing table */
 $num-rushing-attributes: 15;
 
+table tr:nth-child(2n+1) {
+  background-color: lightblue;
+
+  & > td.clickable:hover {
+    background-color: rgb(114, 188, 250);
+  }
+}
+table tr:nth-child(2n) {
+  background-color: lightgray;
+
+  & > td.clickable:hover {
+    background-color: darkgray;
+  }
+}
+
+
+$table-highlight-width: 0.2rem;
+table {
+  background-color: lightcyan;
+}
+.highlight-2 {
+  border-right-width: $table-highlight-width;
+  border-left-width: $table-highlight-width;
+}
+thead tr:nth-child(1) th.highlight-2 {
+  border-top-width: $table-highlight-width;
+}
+tbody tr:last-child td.highlight-2 {
+  border-bottom-width: $table-highlight-width;
+}
+
+$table-highlight-blue: rgb(33, 153, 250);
+.highlight-blue {
+  border-right-color: $table-highlight-blue;
+  border-left-color: $table-highlight-blue;
+}
+thead tr:nth-child(1) th.highlight-blue {
+  border-top-color: $table-highlight-blue;
+}
+tbody tr:last-child td.highlight-blue {
+  border-bottom-color: $table-highlight-blue;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: blueviolet;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+
 // .grid-cols-num-rushing-attributes {
 //   grid-template-columns: repeat($num-rushing-attributes, minmax(0, 1fr));
 
@@ -50,14 +118,14 @@ $num-rushing-attributes: 15;
 //   padding: 15px 5px 10px 5px;
 // }
 
-tr:after {
-    content: ' ';
-    display: block;
-    visibility: hidden;
-    clear: both;
-}
+// tr:after {
+//     content: ' ';
+//     display: block;
+//     visibility: hidden;
+//     clear: both;
+// }
 
-#table-rushing > tbody td, #table-rushing > thead th {
-  width: calc(100% / #{$num-rushing-attributes});
-  float: left;
-}
+// #table-rushing > tbody td, #table-rushing > thead th {
+//   width: calc(100% / #{$num-rushing-attributes});
+//   float: left;
+// }

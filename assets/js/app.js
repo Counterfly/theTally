@@ -18,7 +18,22 @@ import topbar from "topbar"
 import {LiveSocket} from "phoenix_live_view"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+
+/**
+ * Define custom hooks.
+ */
+let Hooks = {}
+Hooks.PlayerName = {
+  mounted() {
+    this.el.addEventListener("input", e => {
+      console.log("IN PlayerName hook!!!!")
+      let inputName = grabText(this.el)
+      this.el.value = inputName
+      this.pushEvent("search_player", {name: inputName})
+    })
+  }
+}
+let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}, hooks: Hooks})
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
@@ -34,3 +49,21 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+
+// custom js
+/**
+ * 
+ */
+ function grabText(element) {
+  const $inputElement = document.getElementById(element.dataset["inputid"]);
+  if ($inputElement === null) {
+    console.log(`grabText failed on element ${element}`);
+    return
+  }
+
+  console.log(`input element text = ${$inputElement.value}`);
+  console.log($inputElement);
+  return $inputElement.value;
+ }
+
+ window.grabText = grabText;
