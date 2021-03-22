@@ -25,10 +25,8 @@ let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("
 let Hooks = {}
 Hooks.PlayerName = {
   mounted() {
-    this.el.addEventListener("input", e => {
-      console.log("IN PlayerName hook!!!!")
+    this.el.addEventListener("click", e => {
       let inputName = grabText(this.el)
-      this.el.value = inputName
       this.pushEvent("search_player", {name: inputName})
     })
   }
@@ -52,7 +50,7 @@ window.liveSocket = liveSocket
 
 // custom js
 /**
- * 
+ * Grabs the value from another element whos id is the elements' `data-inputid` data-attribute.
  */
  function grabText(element) {
   const $inputElement = document.getElementById(element.dataset["inputid"]);

@@ -31,9 +31,6 @@ defmodule TheTally.Football do
     preloads = Keyword.get(opts, :preloads, [])
     where = Keyword.get(opts, :where, [])
     order_by = Keyword.get(opts, :order_by, [])
-    IO.puts("--list_players--")
-    IO.inspect(opts)
-    IO.puts("--end list players--")
 
     player_opts = Keyword.get(opts, :player, [])
     base_query()
@@ -66,8 +63,6 @@ defmodule TheTally.Football do
   `kw_where` : [ Keyword{column_name, filter_value}]
   """
   defp filter_players(query, kw_where) do
-    # IO.puts("filtering players....")
-    # IO.inspect(kw_where)
     Enum.reduce(kw_where, query, fn {col, value}, query ->
       query |> where(^[{col, value}])
     end)

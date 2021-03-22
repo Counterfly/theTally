@@ -103,9 +103,8 @@ defmodule TheTallyWeb.FootballLive do
 
   def handle_event("search_player", %{"name" => name}, socket) do
     # submit a new query for player name search
-    IO.puts("Search!!! - #{name}")
-    IO.inspect(name)
-    update_players(socket.assigns.query, socket)
+    update_query_with_new_player_name(socket.assigns.query, name)
+    |> update_players(socket)
   end
 
   @doc """
@@ -162,15 +161,31 @@ defmodule TheTallyWeb.FootballLive do
   # end
 
 
-  defp update_socket_with_new_player_name(player_name, socket) do
-    query = socket.assigns.query
+  @doc """
+  Helper for assigning a new Player's name to filter by.
+  """
+  defp update_query_with_new_player_name(query, player_name) do
     player_query = Keyword.get(query, :player, [])
     player_query_where = Keyword.get(player_query, :where, [])
 
-    player_query_where = Keyword.put(player_query_where, :name, player_name)
-    player_query = Keyword.put(player_query, :where, player_query_where)
-    query = Keyword.put(query, :player, player_query)
-    query
+    # NOTE: interestingly, we can't refactor the code within the ifs
+    # because (assuming since everything is immutable) variables assigned
+    # within the if-block do not persist outside (they will take their previous value)
+    if player_name != nil and String.length(String.trim(player_name)) > 0 do
+      # player name contains non-whitespace characters
+      # so, update the filter with the inputed (unsanitized) name
+      player_query_where = Keyword.put(player_query_where, :name, player_name)
+      player_query = Keyword.put(player_query, :where, player_query_where)
+      query = Keyword.put(query, :player, player_query)
+      query
+    else
+      # player name is either nil, empty, or whitespace(s)
+      # remove the filter
+      player_query_where = Keyword.delete(player_query_where, :name)
+      player_query = Keyword.put(player_query, :where, player_query_where)
+      query = Keyword.put(query, :player, player_query)
+      query
+    end
   end
 
   def update_players(query, socket) do
