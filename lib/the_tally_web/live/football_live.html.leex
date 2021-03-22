@@ -1,10 +1,9 @@
-<div class="bg-red-300 text-red-600 p-2">
+<div class="bg-red-300 text-red-800 p-4">
   <h3>Known Issues</h3>
   <ul>
     <li>Longest Run (Lng) - The desired result probably is not a character comparison (i wasn't sure what 'T' meant [whether it resulted in a touchdown?]) and so this manifests in how we model the data. We should probably have a 'longest_run' and 'longest_run_is_touchdown' field.</li>
     <li>I spent too long trying to get css-grid to work and just decided to get "something" in. I'm sure a grid would work and is nicer.</li>
     <li>Provide dynamic column re-sizing.</li>
-    <li>Couldn't get socket Hooks to work.</li>
   </ul>
 </div>
 
@@ -37,9 +36,9 @@
           <th class="px-3 border border-green-800 truncate">Pos</th>
           <th class="px-3 border border-green-800 truncate">Att</th>
           <th class="px-3 border border-green-800 truncate">Att/G</th>
-          <th class="px-3 border border-green-800 truncate <%= sort_column_class(@query[:rushing][:order_by][:yards]) %>" phx-click="toggleYds">Yds</th>
+          <th class="px-3 border border-green-800 truncate clickable <%= sort_column_class(@query[:rushing][:order_by][:yards]) %>" phx-click="toggleYds">Yds</th>
           <th class="px-3 border border-green-800 truncate">Yds/C</th>
-          <th class="px-3 border border-green-800 truncate clickable">Yds/G</th>
+          <th class="px-3 border border-green-800 truncate">Yds/G</th>
           <th class="px-3 border border-green-800 truncate clickable <%= sort_column_class(@query[:rushing][:order_by][:touchdowns]) %>" phx-click="toggleTd">TD</th>
           <th class="px-3 border border-green-800 truncate clickable <%= sort_column_class(@query[:rushing][:order_by][:longest_run]) %>" phx-click="toggleLng">Lng</th>
           <th class="px-3 border border-green-800 truncate">1st</th>
