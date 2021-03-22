@@ -33,6 +33,7 @@ defmodule TheTally.Football do
     order_by = Keyword.get(opts, :order_by, [])
 
     player_opts = Keyword.get(opts, :player, [])
+
     base_query()
     |> build_players(player_opts)
     |> join_rushing(Keyword.get(opts, :rushing, []))
@@ -92,17 +93,20 @@ defmodule TheTally.Football do
   defp join_rushing(query, opts \\ []) do
     order_by_list = Keyword.get(opts, :order_by, [])
     # convert the order by from {column: order} to [order, :field, column]
-    order_by = Enum.map order_by_list, fn {col, dir} ->
-      {dir, :field, col}
-    end
+    order_by =
+      Enum.map(order_by_list, fn {col, dir} ->
+        {dir, :field, col}
+      end)
 
-    query = from(players in query,
-      join: rush in assoc(players, :rushing),
-      preload: [rushing: rush]
-    )
+    query =
+      from(players in query,
+        join: rush in assoc(players, :rushing),
+        preload: [rushing: rush]
+      )
+
     Enum.reduce(order_by, query, fn
       {dir, :field, field}, query ->
-        from [q,r] in query, order_by: [{^dir, field(r, ^field)}]
+        from [q, r] in query, order_by: [{^dir, field(r, ^field)}]
     end)
 
     # from(players in query,

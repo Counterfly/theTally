@@ -71,7 +71,8 @@ defmodule TheTallyWeb.FootballLive do
   """
   def sort_column_class(sort_value) do
     if sort_value != nil do
-      "bg-blue-300 highlight-2 highlight-blue" # tailwind classes
+      # tailwind classes
+      "bg-blue-300 highlight-2 highlight-blue"
     else
       ""
     end
@@ -94,7 +95,8 @@ defmodule TheTallyWeb.FootballLive do
   Returns the placeholder for the 'Search by Player Name' input field.
   """
   def placeholder_search_by_player(nil) do
-    "Player Name" # this is a placeholder for the player name search
+    # this is a placeholder for the player name search
+    "Player Name"
   end
 
   def placeholder_search_by_player(search_player_name) do
@@ -112,6 +114,7 @@ defmodule TheTallyWeb.FootballLive do
   Known failing:
     CMD+a Backspace (select-all backspace) deletes everything but this only deletes the last character
   """
+
   # def handle_event("search_player_keydown", %{"key" => "Enter"}, socket) do
   #   # submit a new query
   #   IO.puts("Keydown Enter, starting search")
@@ -159,7 +162,6 @@ defmodule TheTallyWeb.FootballLive do
   #     {:noreply, socket}
   #   end
   # end
-
 
   @doc """
   Helper for assigning a new Player's name to filter by.
